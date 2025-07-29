@@ -15,14 +15,9 @@ public class Recolor {
         int WIDTH = raw.getWidth();
         int HEIGHT = raw.getHeight();
         BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-        int pixels[] = new int[WIDTH * HEIGHT];
+        int[] pixels = new int[WIDTH * HEIGHT];
         raw.getRGB(0, 0, WIDTH, HEIGHT, pixels, 0, WIDTH);
-        for (int i = 0; i < pixels.length; i++) {
-            int alpha = (pixels[i] & 0xff000000) >>> 24;
-            if (pixels[i] >= alpha) {
-                pixels[i] = 0x00ffffff;
-            }
-        }
+        // Correction : on ne touche pas aux pixels, on copie simplement les valeurs RGBA
         image.setRGB(0, 0, WIDTH, HEIGHT, pixels, 0, WIDTH);
         return image;
     }
@@ -34,7 +29,7 @@ public class Recolor {
                 int r = (pixelColor.getRed() + color.getRed()) / 2;
                 int g = (pixelColor.getGreen() + color.getGreen()) / 2;
                 int b = (pixelColor.getBlue() + color.getBlue()) / 2;
-                int a = pixelColor.getAlpha();
+                int a = (pixelColor.getAlpha() + color.getAlpha()) / 2;
                 int rgba = (a << 24) | (r << 16) | (g << 8) | b;
                 image.setRGB(x, y, rgba);
             }
@@ -89,7 +84,8 @@ public class Recolor {
         int red = (int) ((Math.random() * (255)));
         int green = (int) ((Math.random() * (255)));
         int blue = (int) ((Math.random() * (255)));
-        return new Color(red, green, blue);
+        int alpha = (int) ((Math.random() * (255)));
+        return new Color(red, green, blue, alpha);
     }
 
     public static Color getContrastColor(Color color) {
@@ -98,7 +94,7 @@ public class Recolor {
     }
 
     public static String getHexFromColor(Color color) {
-        return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()).toUpperCase();
+        return String.format("#%02x%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).toUpperCase();
     }
 
 }

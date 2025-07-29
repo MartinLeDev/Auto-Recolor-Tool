@@ -11,11 +11,24 @@ dependencies {
     implementation('org.zeroturnaround:zt-zip:1.15')
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'swim.recolor.Window'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
 task fatJar(type: Jar) {
     manifest {
         attributes 'Main-Class': 'swim.recolor.Window'
     }
-    baseName = project.name + '-all'
-    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    archiveBaseName = project.name + '-all'
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
     with jar
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }

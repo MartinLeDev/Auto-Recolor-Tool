@@ -55,7 +55,7 @@ public class Window {
         window = new JFrame();
         window.getContentPane().setForeground(Color.GRAY);
         window.setResizable(false);
-        window.setTitle("Swim Auto Pack Recolor Tool");
+        window.setTitle("Auto Pack Recolor Tool");
         window.getContentPane().setBackground(Color.DARK_GRAY);
         window.getContentPane().setLayout(null);
 
@@ -339,18 +339,21 @@ public class Window {
             int height = 64;
             button.setBounds(width, height, width, height);
             button.setSize(width, height);
-            // check if already colored for the icon of the button
+            BufferedImage img;
             if (Recolor.recolorFiles.containsKey(path)) {
-                BufferedImage img = Recolor.recolorFiles.get(path);
-                Image image = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-                ImageIcon icon = new ImageIcon(image);
-                button.setIcon(icon);
+                img = Recolor.recolorFiles.get(path);
             } else {
-                BufferedImage img = ImageIO.read(new File(path));
-                Image image = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-                ImageIcon icon = new ImageIcon(image);
-                button.setIcon(icon);
+                BufferedImage original = ImageIO.read(new File(path));
+                if (original.getType() != BufferedImage.TYPE_4BYTE_ABGR) {
+                    img = new BufferedImage(original.getWidth(), original.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+                    img.getGraphics().drawImage(original, 0, 0, null);
+                } else {
+                    img = original;
+                }
             }
+            Image image = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            ImageIcon icon = new ImageIcon(image);
+            button.setIcon(icon);
             button.setToolTipText(new File(path).getName());
             buttonPanel.add(button);
             button.setVisible(true);
